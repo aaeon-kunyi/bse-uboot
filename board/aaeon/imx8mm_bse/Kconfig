@@ -1,0 +1,14 @@
+if TARGET_IMX8MM_BSE || TARGET_IMX8MM_DDR4_BSE
+
+config SYS_BOARD
+	default "imx8mm_bse"
+
+config SYS_VENDOR
+	default "aaeon"
+
+config SYS_CONFIG_NAME
+	default "imx8mm_bse"
+
+source "board/freescale/common/Kconfig"
+
+endif
