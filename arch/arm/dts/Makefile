@@ -773,6 +773,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
 	mt7623n-bananapi-bpi-r2.dtb \
 	mt7629-rfb.dtb
 
+dtb-$(CONFIG_ARCH_IMX8M) += imx8mm-bse.dtb
+
 targets += $(dtb-y)
 
 # Add any required device tree compiler flags here
