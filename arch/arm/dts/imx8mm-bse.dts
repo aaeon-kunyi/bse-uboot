@@ -516,3 +516,11 @@
 	status = "okay";
 	extcon = <&typec_ptn5110_2>;
 };
+
+&ecspi2 {
+	tpm2:npct750@0 {
+		compatible = "tis,tpm2-spi";
+		spi-max-frequency = <10000000>;
+	}
+	status = "disabled";
+}
