@@ -1412,12 +1412,40 @@
 
 &iomuxc {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_hog_1>;
+	pinctrl-0 = <
+				&pinctrl_leds
+				&pinctrl_usb_vbus
+				&pinctrl_usb_ovd
+				>;
 
 	imx8mm-evk {
-		pinctrl_hog_1: hoggrp-1 {
+		pinctrl_leds: ledgrp {
 			fsl,pins = <
-				MX8MM_IOMUXC_GPIO1_IO08_GPIO1_IO8		0x19
+				MX8MM_IOMUXC_GPIO1_IO12_GPIO1_I12		0x09
+				MX8MM_IOMUXC_GPIO1_IO13_GPIO1_I13		0x09
+				MX8MM_IOMUXC_GPIO1_IO14_GPIO1_I14		0x09
+			>;
+		};
+
+		pinctrl_usb_vbus: usb_vbusgrp {
+			fsl,pins = <
+				MX8MM_IOMUXC_GPIO1_IO03_GPIO1_I03		0x09
+				MX8MM_IOMUXC_GPIO1_IO04_GPIO1_I04		0x09
+				MX8MM_IOMUXC_GPIO1_IO05_GPIO1_I05		0x09
+				MX8MM_IOMUXC_GPIO1_IO06_GPIO1_I06		0x09
+				MX8MM_IOMUXC_GPIO1_IO07_GPIO1_I07		0x09
+				MX8MM_IOMUXC_GPIO1_IO08_GPIO1_I08		0x09
+			>;
+		};
+
+		pinctrl_usb_ovd: usb_ovdgrp {
+			fsl,pins = <
+				MX8MM_IOMUXC_SAI3_MCLK_GPIO5_I02		0x09
+				MX8MM_IOMUXC_SAI3_TXFS_GPIO4_I31		0x09
+				MX8MM_IOMUXC_SAI3_TXC_GPIO5_I00			0x09
+				MX8MM_IOMUXC_SAI3_TXD_GPIO5_I01			0x09
+				MX8MM_IOMUXC_SAI3_RXFS_GPIO4_I28		0x09
+				MX8MM_IOMUXC_SAI3_RXC_GPIO4_I29			0x09
 			>;
 		};
 
