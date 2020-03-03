@@ -59,7 +59,8 @@
 
 	memory@40000000 {
 		device_type = "memory";
-		reg = <0x0 0x40000000 0 0x80000000>;
+		/* 1GB LPDDR4 */
+		reg = <0x0 0x40000000 0 0x40000000>;
 	};
 
 	resmem: reserved-memory {
@@ -1302,7 +1303,7 @@
 
 / {
 	model = "AAEON i.MX8MM BSE board";
-	compatible = "fsl,imx8mm-evk", "fsl,imx8mm";
+	compatible = "aaeon,imx8mm-bse", "fsl,imx8mm-evk", "fsl,imx8mm";
 
 	chosen {
 		bootargs = "console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200";
@@ -1362,7 +1363,12 @@
 			enable-active-high;
 			regulator-boot-on;
 		};
-
+		/*
+			FIXME
+			due to hardware issue, 
+			the pin for sdcard voltage select
+		*/
+		/*
 		port1 {
 			regulator-name = "usb2_vbus";
 			regulator-min-microvolt = <5000000>;
@@ -1370,7 +1376,9 @@
 			gpio = <&gpio1 4 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
 			regulator-boot-on;
+			status = "diabled";
 		};
+		*/
 
 		port2 {
 			regulator-name = "usb3_vbus";
@@ -1418,34 +1426,36 @@
 				&pinctrl_usb_ovd
 				>;
 
-	imx8mm-evk {
+	imx8mm-bse {
 		pinctrl_leds: ledgrp {
 			fsl,pins = <
-				MX8MM_IOMUXC_GPIO1_IO12_GPIO1_I12		0x09
-				MX8MM_IOMUXC_GPIO1_IO13_GPIO1_I13		0x09
-				MX8MM_IOMUXC_GPIO1_IO14_GPIO1_I14		0x09
+				MX8MM_IOMUXC_GPIO1_IO12_GPIO1_IO12		0x09
+				MX8MM_IOMUXC_GPIO1_IO13_GPIO1_IO13		0x09
+				MX8MM_IOMUXC_GPIO1_IO14_GPIO1_IO14		0x09
 			>;
 		};
 
 		pinctrl_usb_vbus: usb_vbusgrp {
 			fsl,pins = <
-				MX8MM_IOMUXC_GPIO1_IO03_GPIO1_I03		0x09
-				MX8MM_IOMUXC_GPIO1_IO04_GPIO1_I04		0x09
-				MX8MM_IOMUXC_GPIO1_IO05_GPIO1_I05		0x09
-				MX8MM_IOMUXC_GPIO1_IO06_GPIO1_I06		0x09
-				MX8MM_IOMUXC_GPIO1_IO07_GPIO1_I07		0x09
-				MX8MM_IOMUXC_GPIO1_IO08_GPIO1_I08		0x09
+				MX8MM_IOMUXC_GPIO1_IO03_GPIO1_IO3		0x09
+				/*
+					MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4		0x09
+				*/
+				MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5		0x09
+				MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6		0x09
+				MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7		0x09
+				MX8MM_IOMUXC_GPIO1_IO08_GPIO1_IO8		0x09
 			>;
 		};
 
 		pinctrl_usb_ovd: usb_ovdgrp {
 			fsl,pins = <
-				MX8MM_IOMUXC_SAI3_MCLK_GPIO5_I02		0x09
-				MX8MM_IOMUXC_SAI3_TXFS_GPIO4_I31		0x09
-				MX8MM_IOMUXC_SAI3_TXC_GPIO5_I00			0x09
-				MX8MM_IOMUXC_SAI3_TXD_GPIO5_I01			0x09
-				MX8MM_IOMUXC_SAI3_RXFS_GPIO4_I28		0x09
-				MX8MM_IOMUXC_SAI3_RXC_GPIO4_I29			0x09
+				MX8MM_IOMUXC_SAI3_MCLK_GPIO5_IO2		0x09
+				MX8MM_IOMUXC_SAI3_TXFS_GPIO4_IO31		0x09
+				MX8MM_IOMUXC_SAI3_TXC_GPIO5_IO0			0x09
+				MX8MM_IOMUXC_SAI3_TXD_GPIO5_IO1			0x09
+				MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28		0x09
+				MX8MM_IOMUXC_SAI3_RXC_GPIO4_IO29		0x09
 			>;
 		};
 
@@ -1813,6 +1823,7 @@
 		max-snk-mw = <18000>;
 		port-type = "drp";
 		default-role = "sink";
+		status = "disable";
 	};
 
 	typec_ptn5110_2: ptn5110@52 {
@@ -1826,6 +1837,7 @@
 		max-snk-mw = <18000>;
 		port-type = "drp";
 		default-role = "sink";
+		status = "disable";
 	};
 };
 
@@ -1851,6 +1863,7 @@
 		compatible = "spi-flash";
 		spi-max-frequency = <29000000>;
 		spi-nor,ddr-quad-read-dummy = <8>;
+		status = "disable";
 	};
 };
 
