@@ -17,5 +17,4 @@ obj-$(CONFIG_IMX8M_DDR4) += ddr4_timing.o
 else
 #
 obj-y += ../common/mmc.o
-obj-y += ../common/tcpc.o
 endif
