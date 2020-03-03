@@ -1365,7 +1365,7 @@
 		};
 		/*
 			FIXME
-			due to hardware issue, 
+			due to hardware issue,
 			the pin for sdcard voltage select
 		*/
 		/*
