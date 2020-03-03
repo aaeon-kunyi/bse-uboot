@@ -253,14 +253,14 @@
 #endif
 #define CONFIG_ENV_SIZE			0x1000
 #define CONFIG_SYS_MMC_ENV_DEV		1   /* USDHC2 */
-#define CONFIG_MMCROOT			"/dev/mmcblk1p2"  /* USDHC2 */
+#define CONFIG_MMCROOT			"/dev/mmcblk1p1"  /* USDHC2 */
 
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		((CONFIG_ENV_SIZE + (2*1024) + (16*1024)) * 1024)
 
 #define CONFIG_SYS_SDRAM_BASE           0x40000000
 #define PHYS_SDRAM                      0x40000000
-#define PHYS_SDRAM_SIZE			0x80000000 /* 2GB DDR */
+#define PHYS_SDRAM_SIZE			0x40000000 /* 1GB DDR */
 
 #define CONFIG_SYS_MEMTEST_START	PHYS_SDRAM
 #define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_MEMTEST_START + \
