@@ -137,9 +137,9 @@ int dram_init_banksize(void)
 }
 
 #ifdef CONFIG_FEC_MXC
-#define FEC_RST_PAD IMX_GPIO_NR(4, 22)
+#define FEC_RST_PAD IMX_GPIO_NR(4, 1)
 static iomux_v3_cfg_t const fec1_rst_pads[] = {
-	IMX8MM_PAD_SAI2_RXC_GPIO4_IO22 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_SAI1_RXC_GPIO4_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
 static void setup_iomux_fec(void)
