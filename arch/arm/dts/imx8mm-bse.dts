@@ -11,10 +11,16 @@
 #include <dt-bindings/thermal/thermal.h>
 
 / {
-	compatible = "fsl,imx8mm";
+	model = "AAEON i.MX8MM BSE board";
+	compatible = "aaeon,imx8mm-bse", "fsl,imx8mm-evk", "fsl,imx8mm";
 	interrupt-parent = <&gpc>;
 	#address-cells = <2>;
 	#size-cells = <2>;
+
+	chosen {
+		bootargs = "console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200";
+		stdout-patch = &uart2;
+	};
 
 	aliases {
 		ethernet0 = &fec1;
@@ -54,6 +60,13 @@
 				min-residency-us = <2700>;
 				wakeup-latency-us = <1500>;
 			};
+		};
+	};
+
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
 		};
 	};
 
@@ -1282,41 +1295,6 @@
 		dma-names = "rx-tx";
 		status = "disabled";
 	};
-};
-
-&A53_0 {
-	operating-points = <
-		/* kHz    uV */
-		1800000 1000000
-		1600000 950000
-		1200000 850000
-	>;
-	clocks = <&clk IMX8MM_CLK_A53_DIV>, <&clk IMX8MM_CLK_A53_SRC>,
-		<&clk IMX8MM_ARM_PLL>, <&clk IMX8MM_ARM_PLL_OUT>,
-		<&clk IMX8MM_SYS_PLL1_800M>;
-	clock-names = "a53", "arm_a53_src", "arm_pll",
-		"arm_pll_out", "sys1_pll_800m";
-	clock-latency = <61036>;
-	#cooling-cells = <2>;
-};
-
-
-/ {
-	model = "AAEON i.MX8MM BSE board";
-	compatible = "aaeon,imx8mm-bse", "fsl,imx8mm-evk", "fsl,imx8mm";
-
-	chosen {
-		bootargs = "console=ttymxc1,115200 earlycon=ec_imx6q,0x30890000,115200";
-		stdout-patch = &uart2;
-	};
-
-	firmware {
-		optee {
-			compatible = "linaro,optee-tz";
-			method = "smc";
-		};
-	};
-
 	reg_usdhc2_vmmc: regulator-usdhc2 {
 		compatible = "regulator-fixed";
 		regulator-name = "VSD_3V3";
@@ -1351,71 +1329,23 @@
 			color = <LED_COLOR_ID_YELLOW>;
 		};
 	};
+};
 
-	usbport_regulators {
-		compatible = "regulator-fixed";
-
-		port0 {
-			regulator-name = "usb1_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-		/*
-			FIXME
-			due to hardware issue,
-			the pin for sdcard voltage select
-		*/
-		/*
-		port1 {
-			regulator-name = "usb2_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-			status = "diabled";
-		};
-		*/
-
-		port2 {
-			regulator-name = "usb3_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-
-		port3 {
-			regulator-name = "usb4_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-
-		port4 {
-			regulator-name = "usb5_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-
-		port5 {
-			regulator-name = "usb6_vbus";
-			regulator-min-microvolt = <5000000>;
-			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 8 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			regulator-boot-on;
-		};
-	};
+&A53_0 {
+	operating-points = <
+		/* kHz    uV */
+		1800000 1000000
+		1600000 950000
+		1200000 850000
+	>;
+	clocks = <&clk IMX8MM_CLK_A53_DIV>, <&clk IMX8MM_CLK_A53_SRC>,
+		<&clk IMX8MM_ARM_PLL>, <&clk IMX8MM_ARM_PLL_OUT>,
+		<&clk IMX8MM_SYS_PLL1_800M>;
+	clock-names = "a53", "arm_a53_src", "arm_pll",
+		"arm_pll_out", "sys1_pll_800m";
+	clock-latency = <61036>;
+	#cooling-cells = <2>;
+	arm-supply = <&buck2_reg>;
 };
 
 &iomuxc {
@@ -1438,9 +1368,7 @@
 		pinctrl_usb_vbus: usb_vbusgrp {
 			fsl,pins = <
 				MX8MM_IOMUXC_GPIO1_IO03_GPIO1_IO3		0x09
-				/*
-					MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4		0x09
-				*/
+				MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4		0x09
 				MX8MM_IOMUXC_GPIO1_IO05_GPIO1_IO5		0x09
 				MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6		0x09
 				MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7		0x09
@@ -1812,33 +1740,6 @@
 	sda-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 
-	typec_ptn5110_1: ptn5110@50 {
-		compatible = "usb,tcpci";
-		reg = <0x50>;
-		src-pdos = <0x380190c8>;
-		snk-pdos = <0x380190c8 0x3802d0c8>;
-		max-snk-mv = <9000>;
-		max-snk-ma = <2000>;
-		op-snk-mw = <9000>;
-		max-snk-mw = <18000>;
-		port-type = "drp";
-		default-role = "sink";
-		status = "disable";
-	};
-
-	typec_ptn5110_2: ptn5110@52 {
-		compatible = "usb,tcpci";
-		reg = <0x52>;
-		src-pdos = <0x380190c8>;
-		snk-pdos = <0x380190c8 0x3802d0c8>;
-		max-snk-mv = <9000>;
-		max-snk-ma = <2000>;
-		op-snk-mw = <9000>;
-		max-snk-mw = <18000>;
-		port-type = "drp";
-		default-role = "sink";
-		status = "disable";
-	};
 };
 
 &i2c3 {
@@ -1854,7 +1755,7 @@
 &flexspi {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_flexspi>;
-	status = "okay";
+	status = "disable";
 
 	flash0: n25q256a@0 {
 		reg = <0>;
@@ -1924,18 +1825,12 @@
 	status = "okay";
 };
 
-&A53_0 {
-	arm-supply = <&buck2_reg>;
-};
-
 &usbotg1 {
 	status = "okay";
-	extcon = <&typec_ptn5110_1>;
 };
 
 &usbotg2 {
 	status = "okay";
-	extcon = <&typec_ptn5110_2>;
 };
 
 &ecspi2 {
