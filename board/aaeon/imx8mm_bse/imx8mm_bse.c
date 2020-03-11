@@ -86,6 +86,18 @@ static void setup_gpmi_nand(void)
 }
 #endif
 
+#define USDHC2_VSEL_PAD	 IMX_GPIO_NR(1, 1)
+static iomux_v3_cfg_t const usdhc2_vsel[] = {
+	IMX8MM_PAD_GPIO1_IO01_GPIO1_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+static void bse_hook_usdhc2_vsel(void)
+{
+	imx_iomux_v3_setup_multiple_pads(usdhc2_vsel, ARRAY_SIZE(usdhc2_vsel));
+	gpio_request(USDHC2_VSEL_PAD, "sd2_vsel");
+	gpio_direction_output(USDHC2_VSEL_PAD, 0);
+}
+
 #define USB1_VBUS_PAD	 IMX_GPIO_NR(1, 3)
 #define USB2_VBUS_PAD	 IMX_GPIO_NR(1, 4)
 #define USB3_VBUS_PAD	 IMX_GPIO_NR(1, 5)
@@ -265,6 +277,7 @@ int board_init(void)
 	board_qspi_init();
 #endif
 	bse_usb_vbus_init(true);
+	bse_hook_usdhc2_vsel();
 	return 0;
 }
 
