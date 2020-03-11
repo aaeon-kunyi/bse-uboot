@@ -86,6 +86,48 @@ static void setup_gpmi_nand(void)
 }
 #endif
 
+#define USB1_VBUS_PAD	 IMX_GPIO_NR(1, 3)
+#define USB2_VBUS_PAD	 IMX_GPIO_NR(1, 4)
+#define USB3_VBUS_PAD	 IMX_GPIO_NR(1, 5)
+#define USB4_VBUS_PAD	 IMX_GPIO_NR(1, 6)
+#define USB5_VBUS_PAD	 IMX_GPIO_NR(1, 7)
+#define USB6_VBUS_PAD	 IMX_GPIO_NR(1, 8)
+static iomux_v3_cfg_t const vbus_pads[] = {
+	IMX8MM_PAD_GPIO1_IO03_GPIO1_IO3 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_GPIO1_IO04_GPIO1_IO4 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_GPIO1_IO05_GPIO1_IO5 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_GPIO1_IO06_GPIO1_IO6 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_GPIO1_IO07_GPIO1_IO7 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_GPIO1_IO08_GPIO1_IO8 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+static void bse_usb_vbus_init(bool on)
+{
+	const int val = (on) ? 0 : 1;
+	imx_iomux_v3_setup_multiple_pads(vbus_pads, ARRAY_SIZE(vbus_pads));
+	gpio_request(USB1_VBUS_PAD, "usb1_vbus");
+	gpio_request(USB2_VBUS_PAD, "usb2_vbus");
+	gpio_request(USB3_VBUS_PAD, "usb3_vbus");
+	gpio_request(USB4_VBUS_PAD, "usb4_vbus");
+	gpio_request(USB5_VBUS_PAD, "usb5_vbus");
+	gpio_request(USB6_VBUS_PAD, "usb6_vbus");
+
+	gpio_direction_output(USB1_VBUS_PAD, val);
+	gpio_direction_output(USB2_VBUS_PAD, val);
+	gpio_direction_output(USB3_VBUS_PAD, val);
+	gpio_direction_output(USB4_VBUS_PAD, val);
+	gpio_direction_output(USB5_VBUS_PAD, val);
+	gpio_direction_output(USB6_VBUS_PAD, val);
+#if 0
+	gpio_free(USB1_VBUS_PAD);
+	gpio_free(USB2_VBUS_PAD);
+	gpio_free(USB3_VBUS_PAD);
+	gpio_free(USB4_VBUS_PAD);
+	gpio_free(USB5_VBUS_PAD);
+	gpio_free(USB6_VBUS_PAD);
+#endif
+}
+
 int board_early_init_f(void)
 {
 	struct wdog_regs *wdog = (struct wdog_regs *)WDOG1_BASE_ADDR;
@@ -101,7 +143,6 @@ int board_early_init_f(void)
 #ifdef CONFIG_NAND_MXS
 	setup_gpmi_nand(); /* SPL will call the board_early_init_f */
 #endif
-
 	return 0;
 }
 
@@ -191,6 +232,7 @@ int board_usb_init(int index, enum usb_init_type init)
 
 #ifdef CONFIG_SPL_BUILD
 	imx8m_usb_power(index, true);
+	bse_usb_vbus_init(false);
 #endif
 
 	return ret;
@@ -203,6 +245,7 @@ int board_usb_cleanup(int index, enum usb_init_type init)
 	debug("board_usb_cleanup %d, type %d\n", index, init);
 
 	imx8m_usb_power(index, false);
+
 	return ret;
 }
 
@@ -221,7 +264,7 @@ int board_init(void)
 #ifdef CONFIG_FSL_FSPI
 	board_qspi_init();
 #endif
-
+	bse_usb_vbus_init(true);
 	return 0;
 }
 
