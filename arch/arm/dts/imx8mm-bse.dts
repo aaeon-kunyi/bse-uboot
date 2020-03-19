@@ -1578,9 +1578,9 @@
 				MX8MM_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK        0x00000116
 				MX8MM_IOMUXC_ECSPI2_MOSI_ECSPI2_MOSI        0x00000116
 				MX8MM_IOMUXC_ECSPI2_MISO_ECSPI2_MISO        0x00000116
-				MX8MM_IOMUXC_ECSPI2_SS0_ECSPI2_SS0          0x00000116
+				MX8MM_IOMUXC_ECSPI2_SS0_GPIO5_IO13          0x00000109
 				MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24           0x09
-				MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9           0x09
+				MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9           0x09 /* EN but not support */
 			>;
 		};
 	};
@@ -1849,6 +1849,7 @@
 
 &ecspi2 {
 	status = "okay";
+	cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_ecspi2>;
 
@@ -1857,6 +1858,5 @@
 		compatible = "tis,tpm2-spi";
 		spi-max-frequency = <10000000>;
 		gpio-reset = <&gpio3 24 GPIO_ACTIVE_LOW>;
-
 	};
 };
