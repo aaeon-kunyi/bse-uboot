@@ -1572,6 +1572,17 @@
 				MX8MM_IOMUXC_GPIO1_IO02_WDOG1_WDOG_B		0xc6
 			>;
 		};
+
+		pinctrl_ecspi2: ecspi2grp {
+			fsl,pins = <
+				MX8MM_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK        0x00000116
+				MX8MM_IOMUXC_ECSPI2_MOSI_ECSPI2_MOSI        0x00000116
+				MX8MM_IOMUXC_ECSPI2_MISO_ECSPI2_MISO        0x00000116
+				MX8MM_IOMUXC_ECSPI2_SS0_ECSPI2_SS0          0x00000116
+				MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24           0x09
+				MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9           0x09
+			>;
+		};
 	};
 };
 
@@ -1837,9 +1848,15 @@
 };
 
 &ecspi2 {
-	status = "disabled";
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_ecspi2>;
+
 	tpm2:npct750@0 {
+		reg = <0>;
 		compatible = "tis,tpm2-spi";
 		spi-max-frequency = <10000000>;
+		gpio-reset = <&gpio3 24 GPIO_ACTIVE_LOW>;
+
 	};
 };
