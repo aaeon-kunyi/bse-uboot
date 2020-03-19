@@ -86,6 +86,11 @@ static void setup_gpmi_nand(void)
 }
 #endif
 
+#define TPM_RST_PAD IMX_GPIO_NR(3, 24)
+static iomux_v3_cfg_t const tpm_rst_pads[] = {
+	IMX8MM_PAD_SAI5_RXD3_GPIO3_IO24 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
 #define USDHC2_VSEL_PAD	 IMX_GPIO_NR(1, 1)
 static iomux_v3_cfg_t const usdhc2_vsel[] = {
 	IMX8MM_PAD_GPIO1_IO01_GPIO1_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -112,33 +117,6 @@ static iomux_v3_cfg_t const vbus_pads[] = {
 	IMX8MM_PAD_GPIO1_IO07_GPIO1_IO7 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	IMX8MM_PAD_GPIO1_IO08_GPIO1_IO8 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
-
-static void bse_usb_vbus_init(bool on)
-{
-	const int val = (on) ? 0 : 1;
-	imx_iomux_v3_setup_multiple_pads(vbus_pads, ARRAY_SIZE(vbus_pads));
-	gpio_request(USB1_VBUS_PAD, "usb1_vbus");
-	gpio_request(USB2_VBUS_PAD, "usb2_vbus");
-	gpio_request(USB3_VBUS_PAD, "usb3_vbus");
-	gpio_request(USB4_VBUS_PAD, "usb4_vbus");
-	gpio_request(USB5_VBUS_PAD, "usb5_vbus");
-	gpio_request(USB6_VBUS_PAD, "usb6_vbus");
-
-	gpio_direction_output(USB1_VBUS_PAD, val);
-	gpio_direction_output(USB2_VBUS_PAD, val);
-	gpio_direction_output(USB3_VBUS_PAD, val);
-	gpio_direction_output(USB4_VBUS_PAD, val);
-	gpio_direction_output(USB5_VBUS_PAD, val);
-	gpio_direction_output(USB6_VBUS_PAD, val);
-#if 0
-	gpio_free(USB1_VBUS_PAD);
-	gpio_free(USB2_VBUS_PAD);
-	gpio_free(USB3_VBUS_PAD);
-	gpio_free(USB4_VBUS_PAD);
-	gpio_free(USB5_VBUS_PAD);
-	gpio_free(USB6_VBUS_PAD);
-#endif
-}
 
 int board_early_init_f(void)
 {
@@ -189,29 +167,52 @@ int dram_init_banksize(void)
 	return 0;
 }
 
-#ifdef CONFIG_FEC_MXC
 #define FEC_RST_PAD IMX_GPIO_NR(4, 1)
 static iomux_v3_cfg_t const fec1_rst_pads[] = {
 	IMX8MM_PAD_SAI1_RXC_GPIO4_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
-static void setup_iomux_fec(void)
+static void bse_board_reset(void)
 {
 	imx_iomux_v3_setup_multiple_pads(fec1_rst_pads,
 					 ARRAY_SIZE(fec1_rst_pads));
+	imx_iomux_v3_setup_multiple_pads(tpm_rst_pads,
+					 ARRAY_SIZE(tpm_rst_pads));
+	imx_iomux_v3_setup_multiple_pads(vbus_pads,
+					 ARRAY_SIZE(vbus_pads));
 
 	gpio_request(FEC_RST_PAD, "fec1_rst");
 	gpio_direction_output(FEC_RST_PAD, 0);
+	gpio_request(TPM_RST_PAD, "tpm_rst");
+	gpio_direction_output(TPM_RST_PAD, 0);
+	gpio_request(USB1_VBUS_PAD, "usb1_vbus");
+	gpio_direction_output(USB1_VBUS_PAD, 1);
+	gpio_request(USB2_VBUS_PAD, "usb2_vbus");
+	gpio_direction_output(USB2_VBUS_PAD, 1);
+	gpio_request(USB3_VBUS_PAD, "usb3_vbus");
+	gpio_direction_output(USB3_VBUS_PAD, 1);
+	gpio_request(USB4_VBUS_PAD, "usb4_vbus");
+	gpio_direction_output(USB4_VBUS_PAD, 1);
+	gpio_request(USB5_VBUS_PAD, "usb5_vbus");
+	gpio_direction_output(USB5_VBUS_PAD, 1);
+	gpio_request(USB6_VBUS_PAD, "usb6_vbus");
+	gpio_direction_output(USB6_VBUS_PAD, 1);
 	udelay(500);
 	gpio_direction_output(FEC_RST_PAD, 1);
+	gpio_direction_output(TPM_RST_PAD, 1);
+	gpio_direction_output(USB1_VBUS_PAD, 0);
+	gpio_direction_output(USB2_VBUS_PAD, 0);
+	gpio_direction_output(USB2_VBUS_PAD, 0);
+	gpio_direction_output(USB2_VBUS_PAD, 0);
+	gpio_direction_output(USB2_VBUS_PAD, 0);
+	gpio_direction_output(USB2_VBUS_PAD, 0);
 }
 
+#ifdef CONFIG_FEC_MXC
 static int setup_fec(void)
 {
 	struct iomuxc_gpr_base_regs *gpr =
 		(struct iomuxc_gpr_base_regs *)IOMUXC_GPR_BASE_ADDR;
-
-	setup_iomux_fec();
 
 	/* Use 125M anatop REF_CLK1 for ENET1, not from external */
 	clrsetbits_le32(&gpr->gpr[1],
@@ -244,7 +245,6 @@ int board_usb_init(int index, enum usb_init_type init)
 
 #ifdef CONFIG_SPL_BUILD
 	imx8m_usb_power(index, true);
-	bse_usb_vbus_init(false);
 #endif
 
 	return ret;
@@ -268,7 +268,7 @@ int board_ehci_usb_phy_mode(struct udevice *dev)
 
 int board_init(void)
 {
-
+	bse_board_reset();
 #ifdef CONFIG_FEC_MXC
 	setup_fec();
 #endif
@@ -276,7 +276,6 @@ int board_init(void)
 #ifdef CONFIG_FSL_FSPI
 	board_qspi_init();
 #endif
-	bse_usb_vbus_init(true);
 	bse_hook_usdhc2_vsel();
 	return 0;
 }
