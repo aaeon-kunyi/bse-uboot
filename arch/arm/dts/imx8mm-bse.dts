@@ -954,8 +954,10 @@
 		clocks = <&clk IMX8MM_CLK_ECSPI2_ROOT>,
 			<&clk IMX8MM_CLK_ECSPI2_ROOT>;
 		clock-names = "ipg", "per";
+		/*
 		dmas = <&sdma1 2 7 1>, <&sdma1 3 7 2>;
 		dma-names = "rx", "tx";
+		*/
 		status = "disabled";
 	};
 
@@ -1575,12 +1577,12 @@
 
 		pinctrl_ecspi2: ecspi2grp {
 			fsl,pins = <
-				MX8MM_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK        0x00000116
+				MX8MM_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK        0x00001916
 				MX8MM_IOMUXC_ECSPI2_MOSI_ECSPI2_MOSI        0x00000116
 				MX8MM_IOMUXC_ECSPI2_MISO_ECSPI2_MISO        0x00000116
-				MX8MM_IOMUXC_ECSPI2_SS0_GPIO5_IO13          0x00000109
-				MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24           0x09
-				MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9           0x09 /* EN but not support */
+				MX8MM_IOMUXC_ECSPI2_SS0_GPIO5_IO13          0x00000116
+				MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24           0x00000019
+				MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9           0x00000019 /* EN but not support */
 			>;
 		};
 	};
@@ -1856,7 +1858,7 @@
 	tpm2:npct750@0 {
 		reg = <0>;
 		compatible = "tis,tpm2-spi";
-		spi-max-frequency = <10000000>;
+		spi-max-frequency = <1000000>;
 		gpio-reset = <&gpio3 24 GPIO_ACTIVE_LOW>;
 	};
 };

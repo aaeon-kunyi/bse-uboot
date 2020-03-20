@@ -206,6 +206,7 @@ static void bse_board_reset(void)
 	gpio_direction_output(USB2_VBUS_PAD, 0);
 	gpio_direction_output(USB2_VBUS_PAD, 0);
 	gpio_direction_output(USB2_VBUS_PAD, 0);
+	gpio_free(TPM_RST_PAD);
 }
 
 #ifdef CONFIG_FEC_MXC
