@@ -171,9 +171,11 @@
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
 	"mmcautodetect=yes\0" \
+	"boothack=maxcpus=2\0" \
 	"optargs=setenv bootargs ${bootargs} ${kernelargs};\0" \
 	"mmcargs=setenv bootargs ${jh_clk} console=${console} " \
-		"root=/dev/mmcblk${mmcdev}p${mmcpart} rootwait rw \0 " \
+		"root=/dev/mmcblk${mmcdev}p${mmcpart} rootwait rw " \
+		"${boothack} \0" \
 	"loadbootscript=load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${bootdir}/${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
 		"source\0" \
