@@ -239,10 +239,9 @@
         (CONFIG_SYS_INIT_RAM_SIZE - GENERATED_GBL_DATA_SIZE)
 #define CONFIG_SYS_INIT_SP_ADDR \
         (CONFIG_SYS_INIT_RAM_ADDR + CONFIG_SYS_INIT_SP_OFFSET)
-
 #define CONFIG_ENV_OVERWRITE
 #if defined(CONFIG_ENV_IS_IN_MMC)
-#define CONFIG_ENV_OFFSET               (64 * SZ_64K)
+#define CONFIG_ENV_OFFSET               (64 * SZ_64K) /* OFFSET 4M */
 #elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
 #define CONFIG_ENV_OFFSET		(4 * 1024 * 1024)
 #define CONFIG_ENV_SECT_SIZE		(64 * 1024)
@@ -253,9 +252,16 @@
 #elif defined(CONFIG_ENV_IS_IN_NAND)
 #define CONFIG_ENV_OFFSET       (60 << 20)
 #endif
-#define CONFIG_ENV_SIZE			0x1000
+
+#define CONFIG_ENV_SIZE			(8 * SZ_1K)  /* 8K */
 #define CONFIG_SYS_MMC_ENV_DEV		1   /* USDHC2 */
 #define CONFIG_MMCROOT			"/dev/mmcblk1p1"  /* USDHC2 */
+
+#if defined(CONFIG_ENV_IS_IN_MMC)
+#define CONFIG_SYS_REDUNDAND_ENVIRONMENT
+#define CONFIG_ENV_OFFSET_REDUND	(65 * SZ_64K)   /* OFFSET 4M + 64K */
+#define CONFIG_ENV_SIZE_REDUND		CONFIG_ENV_SIZE /* 8K, must same ENV_SIZE */
+#endif
 
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		((CONFIG_ENV_SIZE + (2*1024) + (16*1024)) * 1024)
