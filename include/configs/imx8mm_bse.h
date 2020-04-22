@@ -253,14 +253,14 @@
 #define CONFIG_ENV_OFFSET       (60 << 20)
 #endif
 
-#define CONFIG_ENV_SIZE			(8 * SZ_1K)  /* 8K */
+#define CONFIG_ENV_SIZE			(32 * SZ_1K)  /* 32K */
 #define CONFIG_SYS_MMC_ENV_DEV		1   /* USDHC2 */
 #define CONFIG_MMCROOT			"/dev/mmcblk1p1"  /* USDHC2 */
 
 #if defined(CONFIG_ENV_IS_IN_MMC)
 #define CONFIG_SYS_REDUNDAND_ENVIRONMENT
 #define CONFIG_ENV_OFFSET_REDUND	(65 * SZ_64K)   /* OFFSET 4M + 64K */
-#define CONFIG_ENV_SIZE_REDUND		CONFIG_ENV_SIZE /* 8K, must same ENV_SIZE */
+#define CONFIG_ENV_SIZE_REDUND		CONFIG_ENV_SIZE /* 32K, must same ENV_SIZE */
 #endif
 
 /* Size of malloc() pool */
