@@ -86,6 +86,15 @@ static void setup_gpmi_nand(void)
 }
 #endif
 
+
+#define ECSPI_PAD_CTRL	(PAD_CTL_DSE6 | PAD_CTL_FSEL2 | PAD_CTL_HYS)
+static iomux_v3_cfg_t const tpm_spi_pads[] = {
+	IMX8MM_PAD_ECSPI2_SCLK_ECSPI2_SCLK | MUX_PAD_CTRL(ECSPI_PAD_CTRL),
+	IMX8MM_PAD_ECSPI2_MOSI_ECSPI2_MOSI | MUX_PAD_CTRL(ECSPI_PAD_CTRL),
+	IMX8MM_PAD_ECSPI2_MISO_ECSPI2_MISO | MUX_PAD_CTRL(ECSPI_PAD_CTRL),
+	IMX8MM_PAD_ECSPI2_SS0_ECSPI2_SS0 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
 #define TPM_RST_PAD IMX_GPIO_NR(3, 24)
 static iomux_v3_cfg_t const tpm_rst_pads[] = {
 	IMX8MM_PAD_SAI5_RXD3_GPIO3_IO24 | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -176,6 +185,8 @@ static void bse_board_reset(void)
 {
 	imx_iomux_v3_setup_multiple_pads(fec1_rst_pads,
 					 ARRAY_SIZE(fec1_rst_pads));
+	imx_iomux_v3_setup_multiple_pads(tpm_spi_pads,
+					ARRAY_SIZE(tpm_spi_pads));
 	imx_iomux_v3_setup_multiple_pads(tpm_rst_pads,
 					 ARRAY_SIZE(tpm_rst_pads));
 	imx_iomux_v3_setup_multiple_pads(vbus_pads,
