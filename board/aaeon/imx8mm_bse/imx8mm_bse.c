@@ -100,31 +100,26 @@ static iomux_v3_cfg_t const tpm_rst_pads[] = {
 	IMX8MM_PAD_SAI5_RXD3_GPIO3_IO24 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
-#define USDHC2_VSEL_PAD	 IMX_GPIO_NR(1, 1)
-static iomux_v3_cfg_t const usdhc2_vsel[] = {
-	IMX8MM_PAD_GPIO1_IO01_GPIO1_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-static void bse_hook_usdhc2_vsel(void)
-{
-	imx_iomux_v3_setup_multiple_pads(usdhc2_vsel, ARRAY_SIZE(usdhc2_vsel));
-	gpio_request(USDHC2_VSEL_PAD, "sd2_vsel");
-	gpio_direction_output(USDHC2_VSEL_PAD, 0);
-}
-
 #define USB1_VBUS_PAD	 IMX_GPIO_NR(1, 3)
-#define USB2_VBUS_PAD	 IMX_GPIO_NR(1, 4)
+#define USB2_VBUS_PAD	 IMX_GPIO_NR(1, 1)
 #define USB3_VBUS_PAD	 IMX_GPIO_NR(1, 5)
 #define USB4_VBUS_PAD	 IMX_GPIO_NR(1, 6)
 #define USB5_VBUS_PAD	 IMX_GPIO_NR(1, 7)
 #define USB6_VBUS_PAD	 IMX_GPIO_NR(1, 8)
 static iomux_v3_cfg_t const vbus_pads[] = {
 	IMX8MM_PAD_GPIO1_IO03_GPIO1_IO3 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	IMX8MM_PAD_GPIO1_IO04_GPIO1_IO4 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_GPIO1_IO01_GPIO1_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	IMX8MM_PAD_GPIO1_IO05_GPIO1_IO5 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	IMX8MM_PAD_GPIO1_IO06_GPIO1_IO6 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	IMX8MM_PAD_GPIO1_IO07_GPIO1_IO7 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	IMX8MM_PAD_GPIO1_IO08_GPIO1_IO8 | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+#define BOARD_VERSEL1  IMX_GPIO_NR(4, 24)
+#define BOARD_VERSEL2  IMX_GPIO_NR(4, 25)
+static iomux_v3_cfg_t const brdver_pads[] = {
+	IMX8MM_PAD_SAI2_TXFS_GPIO4_IO24 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	IMX8MM_PAD_SAI2_TXC_GPIO4_IO25 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
 int board_early_init_f(void)
@@ -180,6 +175,27 @@ int dram_init_banksize(void)
 static iomux_v3_cfg_t const fec1_rst_pads[] = {
 	IMX8MM_PAD_SAI1_RXC_GPIO4_IO1 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
+
+static unsigned int bse_board_version(void)
+{
+	unsigned int ret = 0;
+	imx_iomux_v3_setup_multiple_pads(brdver_pads,
+					 ARRAY_SIZE(brdver_pads));
+	gpio_request(BOARD_VERSEL1, "brd_vsel1");
+	gpio_request(BOARD_VERSEL2, "brd_vsel2");
+	gpio_direction_input(BOARD_VERSEL1);
+	gpio_direction_input(BOARD_VERSEL2);
+
+	if (gpio_get_value(BOARD_VERSEL1) > 0)
+		ret |= (1 << 0);
+	if (gpio_get_value(BOARD_VERSEL2) > 0)
+		ret |= (1 << 1);
+
+	gpio_free(BOARD_VERSEL1);
+	gpio_free(BOARD_VERSEL2);
+	return ret;
+}
+
 
 static void bse_board_reset(void)
 {
@@ -280,6 +296,7 @@ int board_ehci_usb_phy_mode(struct udevice *dev)
 
 int board_init(void)
 {
+	unsigned long ver = 0;
 	bse_board_reset();
 #ifdef CONFIG_FEC_MXC
 	setup_fec();
@@ -288,7 +305,8 @@ int board_init(void)
 #ifdef CONFIG_FSL_FSPI
 	board_qspi_init();
 #endif
-	bse_hook_usdhc2_vsel();
+	ver = bse_board_version();
+	env_set_ulong("brdver", ver);
 	return 0;
 }
 
