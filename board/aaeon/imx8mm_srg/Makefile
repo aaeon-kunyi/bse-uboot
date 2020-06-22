@@ -1,0 +1,20 @@
+#
+# Copyright 2018 NXP
+# Copyright 2020 AAEON
+#
+# SPDX-License-Identifier:      GPL-2.0+
+#
+
+obj-y += imx8mm_srg.o
+
+ifdef CONFIG_SPL_BUILD
+# for SPL Build
+obj-y += spl.o
+
+obj-$(CONFIG_IMX8M_LPDDR4) += lpddr4_timing.o
+obj-$(CONFIG_IMX8M_DDR4) += ddr4_timing.o
+
+else
+#
+obj-y += ../common/mmc.o
+endif

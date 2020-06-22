@@ -774,6 +774,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += \
 	mt7629-rfb.dtb
 
 dtb-$(CONFIG_ARCH_IMX8M) += imx8mm-bse.dtb
+dtb-$(CONFIG_TARGET_IMX8MM_SRG) += srg-imx8mm.dtb
 
 targets += $(dtb-y)
 

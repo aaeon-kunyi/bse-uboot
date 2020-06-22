@@ -90,6 +90,12 @@ config TARGET_IMX8MM_BSE
 	select SUPPORT_SPL
 	select IMX8M_LPDDR4
 
+config TARGET_IMX8MM_SRG
+	bool "AAEON imx8mm SRG LPDDR4 board"
+	select IMX8MM
+	select SUPPORT_SPL
+	select IMX8M_LPDDR4
+
 endchoice
 
 source "board/freescale/imx8mq_evk/Kconfig"
@@ -99,5 +105,6 @@ source "board/freescale/imx8mm_evk/Kconfig"
 source "board/freescale/imx8mm_val/Kconfig"
 source "board/freescale/imx8mn_evk/Kconfig"
 source "board/aaeon/imx8mm_bse/Kconfig"
+source "board/aaeon/imx8mm_srg/Kconfig"
 
 endif
