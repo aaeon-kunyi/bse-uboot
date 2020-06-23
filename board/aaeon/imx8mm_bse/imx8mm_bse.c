@@ -606,12 +606,14 @@ size_t display_count = ARRAY_SIZE(displays);
 
 int board_late_init(void)
 {
+	unsigned long ver;
 #ifdef CONFIG_ENV_IS_IN_MMC
 #ifndef CONFIG_SPL_BUILD
 	board_late_mmc_env_init();
 #endif
 #endif
-
+	ver = bse_board_version();
+	env_set_ulong("brdver", ver);
 	return 0;
 }
 
