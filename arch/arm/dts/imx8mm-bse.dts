@@ -1817,6 +1817,7 @@
 	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
 	bus-width = <4>;
 	non-removable;
+	no-1-8-v;
 	vmmc-supply = <&reg_usdhc2_vmmc>;
 	status = "okay";
 };
